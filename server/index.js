@@ -8,12 +8,21 @@ const app = express();
 const socket = require("socket.io");
 require("dotenv").config();
 
-app.use(cors());
-app.use(express.json());
+// --- 1. ALLOWED ORIGINS ---
+const allowedOrigins = [
+  "http://localhost:5173",                // Local React
+  "https://snappy-woad.vercel.app"        // Deployed Vercel App
+];
 
-// --- CRITICAL FIX: Share the uploads folder ---
-// We use path.join to be safe about where the folder is
-// ----------------------------------------------
+// --- 2. EXPRESS CORS ---
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
+
+app.use(express.json());
 
 mongoose
   .connect(process.env.MONGO_URL)
@@ -32,9 +41,10 @@ const server = app.listen(process.env.PORT || 3001, () => {
   console.log(`Server Started on Port ${process.env.PORT || 3001}`);
 });
 
+// --- 3. SOCKET.IO CORS ---
 const io = socket(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: allowedOrigins, // Use the same allowed list
     credentials: true,
   },
 });
@@ -43,7 +53,6 @@ global.onlineUsers = new Map();
 
 io.on("connection", (socket) => {
   global.chatSocket = socket;
-  
   socket.on("add-user", (userId) => {
     onlineUsers.set(userId, socket.id);
     io.emit("user-online", userId);
@@ -52,7 +61,6 @@ io.on("connection", (socket) => {
   socket.on("send-msg", (data) => {
     const sendUserSocket = onlineUsers.get(data.to);
     if (sendUserSocket) {
-      // Send both message and image
       socket.to(sendUserSocket).emit("msg-recieve", {
         msg: data.msg,
         image: data.image 
