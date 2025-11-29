@@ -14,9 +14,10 @@ INSTRUCTIONS:
 -->
 
 Login Screen
+![Login Screen](./screenshots/login.png)
 
 Chat Interface
-
+![Chat Screen](./screenshots/chat.png)
 
 
 
