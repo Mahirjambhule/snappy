@@ -1,6 +1,11 @@
-Snappy ⚡
+# Snappy ⚡
 
-Snappy is a fully functional, real-time messaging platform built with the MERN stack. It features instant messaging, secure authentication, group chats, and seamless media sharing.
+**Snappy** is a fully functional, real-time messaging platform built with the MERN stack. It features instant messaging, secure authentication, group chats, and seamless media sharing.
+
+![MERN Stack](https://img.shields.io/badge/MERN-Full%20Stack-blue)
+![Socket.io](https://img.shields.io/badge/Socket.io-Real%20Time-black)
+![JWT](https://img.shields.io/badge/JWT-Auth-orange)
+![Styled Components](https://img.shields.io/badge/Styled-Components-db7093)
 
 🚀 Live Demo
 
