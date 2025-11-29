@@ -1,14 +1,19 @@
 ⚡ Snappy - Real-Time Chat Application
 
-Snappy is a full-stack, real-time messaging application built to provide a seamless chat experience. It features instant messaging, group chats, media sharing, and live online status indicators, all wrapped in a premium dark-mode interface.
+Snappy is a full-stack, real-time messaging application built to provide a seamless chat experience. It features instant messaging, group chats, media sharing, and live online status indicators, all wrapped in a premium interface.
 
-🔗 Live Demo
+🔗 Live Demo: snappy-woad.vercel.app
 
 📸 Screenshots
 
-(Replace these links with your actual screenshots or remove this section)
+<!--
+INSTRUCTIONS:
+1. Create a folder named 'screenshots' in your project root.
+2. Add your screenshot files there named 'login.png' and 'chat.png'.
+3. They will automatically appear below once pushed to GitHub.
+-->
 
-Login / Register
+Login Screen
 
 Chat Interface
 
@@ -18,19 +23,21 @@ Chat Interface
 
 ✨ Key Features
 
-🔒 Secure Authentication: User registration and login with password encryption (Bcrypt).
+🔒 Secure Authentication: User registration and login securely handled with JWT (JSON Web Tokens) and password encryption (Bcrypt).
 
-⚡ Real-Time Messaging: Instant delivery of messages using Socket.io.
+⚡ Real-Time Messaging: Instant bi-directional communication using Socket.io.
 
 🟢 Online Presence: Real-time Online/Offline status indicators for friends.
 
-👥 Group Chats: Create named groups, add multiple members, and identify senders within the group.
+👥 Group Chats: Create named groups, add multiple members, and see sender identities.
 
 📷 Media Sharing: Seamless image uploads powered by Multer and Cloudinary.
 
-🤖 Dynamic Avatars: Unique, procedurally generated avatars using Robohash API.
+🤖 Dynamic Avatars: Unique, procedurally generated avatars using the Robohash API.
 
-🎨 Modern UI: Fully responsive, dark-mode design using Styled-Components.
+🗑️ Message Management: Ability to delete messages in real-time for both sender and receiver.
+
+🎨 Modern UI: Responsive design built with React and Styled-Components.
 
 🛠️ Tech Stack
 
@@ -42,7 +49,7 @@ Styled-Components: For scoped, dynamic CSS styling.
 
 Axios: Handling API requests.
 
-Socket.io-Client: Managing WebSocket connections on the client.
+Socket.io-Client: Managing WebSocket connections.
 
 React-Toastify: For elegant notification popups.
 
@@ -52,11 +59,11 @@ Node.js & Express.js: RESTful API server.
 
 MongoDB & Mongoose: NoSQL database for flexible data storage.
 
-Socket.io: Enabling bi-directional, real-time communication.
+Socket.io: Enabling real-time event-based communication.
 
-Bcrypt: For hashing and securing passwords.
+JWT & Bcrypt: For secure authentication and authorization.
 
-Multer & Cloudinary: Handling multipart form data and cloud image storage.
+Multer & Cloudinary: Handling file uploads and cloud storage.
 
 ⚙️ Environment Variables
 
@@ -76,6 +83,10 @@ MONGO_URL
 
 Your MongoDB Connection String (Atlas or Local)
 
+JWT_SECRET
+
+Secret key for signing JWT tokens
+
 CLOUDINARY_CLOUD_NAME
 
 Your Cloudinary Cloud Name
@@ -94,8 +105,9 @@ Follow these steps to get a local copy up and running.
 
 1. Clone the Repository
 
-git clone [https://github.com/your-username/snappy-chat.git](https://github.com/your-username/snappy-chat.git)
-cd snappy-chat
+git clone [https://github.com/Mahirjambhule/snappy.git](https://github.com/Mahirjambhule/snappy.git)
+cd snappy
+
 
 
 2. Backend Setup
@@ -106,9 +118,11 @@ cd server
 npm install
 
 
+
 Start the server.
 
 npm run dev
+
 
 
 Server should run on http://localhost:3001
@@ -121,16 +135,18 @@ cd client
 npm install
 
 
+
 Start the React app.
 
 npm run dev
+
 
 
 Client should run on http://localhost:5173
 
 📂 Project Structure
 
-snappy-chat/
+snappy/
 ├── client/             # React Frontend
 │   ├── src/
 │   │   ├── components/ # ChatContainer, Contacts, Inputs...
@@ -139,9 +155,11 @@ snappy-chat/
 │   └── ...
 └── server/             # Node Backend
     ├── controllers/    # Logic for Auth, Messages, Groups
+    ├── middlewares/    # Auth protection (JWT)
     ├── models/         # Mongoose Schemas
     ├── routes/         # API Endpoints
     └── index.js        # Server Entry Point
+
 
 
 🔮 Future Improvements
@@ -156,10 +174,10 @@ Read Receipts: Double ticks when a message is read.
 
 👤 Author
 
-Your Name
+Mahir Jambhule
 
-GitHub: @YourUsername
+GitHub: @Mahirjambhule
 
-LinkedIn: Your Profile
+Live App: snappy-woad.vercel.app
 
 Made with ❤️ using the MERN Stack.
