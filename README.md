@@ -1,17 +1,16 @@
-⚡ Snappy - Real-Time Chat Application
+Snappy ⚡
 
-Snappy is a full-stack, real-time messaging application built to provide a seamless chat experience. It features instant messaging, group chats, media sharing, and live online status indicators, all wrapped in a premium interface.
+Snappy is a fully functional, real-time messaging platform built with the MERN stack. It features instant messaging, secure authentication, group chats, and seamless media sharing.
 
-🔗 Live Demo: snappy-woad.vercel.app
+🚀 Live Demo
+
+Check out the live application running in production:
+
+Frontend (Client): https://snappy-woad.vercel.app
+
+Backend (API): https://snappy-8ien.onrender.com
 
 📸 Screenshots
-
-<!--
-INSTRUCTIONS:
-1. Create a folder named 'screenshots' in your project root.
-2. Add your screenshot files there named 'login.png' and 'chat.png'.
-3. They will automatically appear below once pushed to GitHub.
--->
 
 Login Screen
 ![Login Screen](./screenshots/login.png)
@@ -22,163 +21,115 @@ Chat Interface
 
 
 
-✨ Key Features
 
-🔒 Secure Authentication: User registration and login securely handled with JWT (JSON Web Tokens) and password encryption (Bcrypt).
+✨ Features
 
-⚡ Real-Time Messaging: Instant bi-directional communication using Socket.io.
+💬 Chat Experience
 
-🟢 Online Presence: Real-time Online/Offline status indicators for friends.
+Real-Time Messaging: Instant bi-directional communication powered by Socket.io.
 
-👥 Group Chats: Create named groups, add multiple members, and see sender identities.
+Group Chats: Create named groups, add multiple friends, and interact with sender identities.
 
-📷 Media Sharing: Seamless image uploads powered by Multer and Cloudinary.
+Online Presence: Live status indicators (Online/Offline) for all contacts.
 
-🤖 Dynamic Avatars: Unique, procedurally generated avatars using the Robohash API.
+Message Management: Delete messages instantly for both sender and receiver.
 
-🗑️ Message Management: Ability to delete messages in real-time for both sender and receiver.
+Dynamic Avatars: Unique, procedurally generated avatars for every user via Robohash.
 
-🎨 Modern UI: Responsive design built with React and Styled-Components.
+⚙️ Technical & Security
+
+Secure Authentication: User registration and login using JWT and Bcrypt encryption.
+
+Media Sharing: Drag-and-drop or select images to send in chat.
+
+Cloud Storage: Images are optimized and stored securely using Cloudinary.
+
+Modern UI: A premium, responsive dark-mode interface built with Styled-Components.
 
 🛠️ Tech Stack
 
-Frontend
+Frontend:
 
-React.js (Vite): Fast, component-based UI library.
+React.js (Vite)
 
-Styled-Components: For scoped, dynamic CSS styling.
+Styled-Components (CSS-in-JS)
 
-Axios: Handling API requests.
+Axios (API Requests)
 
-Socket.io-Client: Managing WebSocket connections.
+Socket.io-Client
 
-React-Toastify: For elegant notification popups.
+React-Toastify
 
-Backend
+React Icons
 
-Node.js & Express.js: RESTful API server.
+Backend:
 
-MongoDB & Mongoose: NoSQL database for flexible data storage.
+Node.js
 
-Socket.io: Enabling real-time event-based communication.
+Express.js
 
-JWT & Bcrypt: For secure authentication and authorization.
+MongoDB & Mongoose
 
-Multer & Cloudinary: Handling file uploads and cloud storage.
+Socket.io (WebSockets)
 
-⚙️ Environment Variables
+JSON Web Token (JWT)
 
-To run this project locally, you will need to add the following environment variables to your .env file in the server directory.
+Multer & Cloudinary (File Uploads)
 
-server/.env
+DevOps & Deployment:
 
-Variable
+Frontend: Vercel
 
-Description
+Backend: Render
 
-PORT
+Database: MongoDB Atlas
 
-The port the server runs on (e.g., 3001)
+🔧 Environment Variables
 
-MONGO_URL
+To run this project locally, you will need to add the following environment variables to your .env file in the server folder:
 
-Your MongoDB Connection String (Atlas or Local)
+PORT=3001
+MONGO_URL=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 
-JWT_SECRET
 
-Secret key for signing JWT tokens
+💻 Run Locally
 
-CLOUDINARY_CLOUD_NAME
+Follow these steps to set up the project locally on your machine.
 
-Your Cloudinary Cloud Name
-
-CLOUDINARY_API_KEY
-
-Your Cloudinary API Key
-
-CLOUDINARY_API_SECRET
-
-Your Cloudinary API Secret
-
-🚀 Installation & Local Setup
-
-Follow these steps to get a local copy up and running.
-
-1. Clone the Repository
-
+1. Clone the repository
+```bash
 git clone [https://github.com/Mahirjambhule/snappy.git](https://github.com/Mahirjambhule/snappy.git)
 cd snappy
+```
 
-
-
-2. Backend Setup
-
-Navigate to the server folder and install dependencies.
-
+2. Install Dependencies
+```bash
+# Install Backend dependencies
 cd server
 npm install
 
-
-
-Start the server.
-
-npm run dev
-
-
-
-Server should run on http://localhost:3001
-
-3. Frontend Setup
-
-Open a new terminal, navigate to the client folder, and install dependencies.
-
-cd client
+# Install Frontend dependencies
+cd ../client
 npm install
+```
 
-
-
-Start the React app.
-
+3. Start the Application
+```bash
+Terminal 1 (Backend):
+cd server
 npm run dev
 
+Terminal 2 (Frontend):
+cd client
+npm run dev
+```
 
-
-Client should run on http://localhost:5173
-
-📂 Project Structure
-
-snappy/
-├── client/             # React Frontend
-│   ├── src/
-│   │   ├── components/ # ChatContainer, Contacts, Inputs...
-│   │   ├── pages/      # Login, Register, Chat
-│   │   ├── utils/      # API Routes configuration
-│   └── ...
-└── server/             # Node Backend
-    ├── controllers/    # Logic for Auth, Messages, Groups
-    ├── middlewares/    # Auth protection (JWT)
-    ├── models/         # Mongoose Schemas
-    ├── routes/         # API Endpoints
-    └── index.js        # Server Entry Point
-
-
-
-🔮 Future Improvements
-
-Search Functionality: Filter contacts and messages.
-
-Voice/Video Calls: WebRTC integration.
-
-Message Reactions: React to specific messages with emojis.
-
-Read Receipts: Double ticks when a message is read.
-
-👤 Author
-
-Mahir Jambhule
-
-GitHub: @Mahirjambhule
-
-Live App: snappy-woad.vercel.app
-
-Made with ❤️ using the MERN Stack.
+4. Access the App
+```bash
+Open your browser and navigate to:
+http://localhost:5173
+```
