@@ -60,6 +60,13 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("delete-msg", (data) => {
+    const sendUserSocket = onlineUsers.get(data.to);
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit("msg-deleted", data.msgId);
+    }
+  });
+
   socket.on("disconnect", () => {
     let disconnectedUserId;
     for (let [id, socketId] of onlineUsers.entries()) {

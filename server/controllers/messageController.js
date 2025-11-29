@@ -11,21 +11,22 @@ module.exports.getMessages = async (req, res, next) => {
        query = { users: { $all: [from, to] } };
     }
 
-    // UPDATED LINE: We added .populate() to get the username of the sender
     const messages = await Messages.find(query)
       .sort({ updatedAt: 1 })
       .populate("sender", "username avatarImage");
 
-      const projectedMessages = messages.map((msg) => {
-        return {
-          fromSelf: msg.sender._id.toString() === from,
-          message: msg.message.text,
-          image: msg.message.image || "", // NEW: Send image URL
-          sender: {
-              username: msg.sender.username,
-          } 
-        };
-      });
+    const projectedMessages = messages.map((msg) => {
+      return {
+        // CRITICAL UPDATE: We send the ID now
+        id: msg._id, 
+        fromSelf: msg.sender._id.toString() === from,
+        message: msg.message.text,
+        image: msg.message.image || "",
+        sender: {
+            username: msg.sender.username,
+        } 
+      };
+    });
     res.json(projectedMessages);
   } catch (ex) {
     next(ex);
@@ -33,26 +34,37 @@ module.exports.getMessages = async (req, res, next) => {
 };
 
 module.exports.addMessage = async (req, res, next) => {
-    try {
-      // NEW: Accept 'image' from req.body
-      const { from, to, message, groupId, image } = req.body; 
-      
-      let data;
-      const msgData = {
-          message: { 
-              text: message || "", // Text can be empty if there's an image
-              image: image || ""   // Save image URL
-          },
-          users: groupId ? [] : [from, to],
-          groupId: groupId || null,
-          sender: from,
-      };
-  
-      data = await Messages.create(msgData);
-  
-      if (data) return res.json({ msg: "Message added successfully." });
-      else return res.json({ msg: "Failed to add message to database" });
-    } catch (ex) {
-      next(ex);
-    }
-  };
+  try {
+    const { from, to, message, groupId, image } = req.body;
+    
+    const msgData = {
+      message: { 
+        text: message || "", 
+        image: image || ""
+      },
+      users: groupId ? [] : [from, to],
+      groupId: groupId || null,
+      sender: from,
+    };
+
+    const data = await Messages.create(msgData);
+
+    if (data) return res.json({ msg: "Message added successfully." });
+    else return res.json({ msg: "Failed to add message to database" });
+  } catch (ex) {
+    next(ex);
+  }
+};
+
+// NEW FUNCTION: Delete Message
+module.exports.deleteMessage = async (req, res, next) => {
+  try {
+    const { msgId } = req.body;
+    if (!msgId) return res.json({ msg: "Message ID is required", status: false });
+    
+    await Messages.findByIdAndDelete(msgId);
+    return res.json({ status: true, msg: "Message deleted successfully" });
+  } catch (ex) {
+    next(ex);
+  }
+};

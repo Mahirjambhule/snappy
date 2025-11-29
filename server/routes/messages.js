@@ -1,23 +1,23 @@
-const { addMessage, getMessages } = require("../controllers/messageController");
+const { addMessage, getMessages, deleteMessage } = require("../controllers/messageController");
 const router = require("express").Router();
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const { protect } = require("../middlewares/authMiddleware"); // <--- THIS WAS MISSING
 require("dotenv").config();
 
-// 1. Configure Cloudinary
+// --- Cloudinary Config ---
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// 2. Configure Multer to use Cloudinary
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "snappy-chat", // The folder name in your Cloudinary account
-    allowed_formats: ["jpg", "png", "jpeg", "gif"], // Allowed file types
+    folder: "snappy-chat",
+    allowed_formats: ["jpg", "png", "jpeg", "gif"],
   },
 });
 
@@ -25,13 +25,18 @@ const upload = multer({ storage: storage });
 
 // --- ROUTES ---
 
-router.post("/addmsg/", addMessage);
-router.post("/getmsg/", getMessages);
+// 1. Add Message (Protected)
+router.post("/addmsg/", protect, addMessage);
 
-// 3. Upload Route (Updated)
-router.post("/uploadimage", upload.single("image"), (req, res) => {
+// 2. Get Messages (Protected)
+router.post("/getmsg/", protect, getMessages);
+
+// 3. Delete Message (Protected)
+router.post("/deletemsg/", protect, deleteMessage);
+
+// 4. Upload Image (Protected)
+router.post("/uploadimage", protect, upload.single("image"), (req, res) => {
   try {
-    // Cloudinary automatically puts the URL in req.file.path
     return res.json({ 
         status: true, 
         imageUrl: req.file.path 

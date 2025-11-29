@@ -4,8 +4,8 @@ import ChatInput from "./ChatInput";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { IoMdDownload, IoMdClose } from "react-icons/io";
-// IMPORT ROUTES
-import { sendMessageRoute, receiveMessageRoute, uploadImageRoute } from "../utils/APIRoutes";
+import { FaTrash } from "react-icons/fa"; // NEW Icon
+import { sendMessageRoute, receiveMessageRoute, uploadImageRoute, deleteMessageRoute } from "../utils/APIRoutes";
 
 export default function ChatContainer({ currentChat, currentUser, socket }) {
   const [messages, setMessages] = useState([]);
@@ -20,8 +20,10 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
         if (currentChat.isGroup) bodyData.groupId = currentChat._id;
         else bodyData.to = currentChat._id;
 
-        // USE RECEIVE MESSAGE ROUTE
-        const response = await axios.post(receiveMessageRoute, bodyData);
+        const config = {
+            headers: { Authorization: `Bearer ${currentUser.token}` },
+        };
+        const response = await axios.post(receiveMessageRoute, bodyData, config);
         setMessages(response.data);
       }
     };
@@ -34,9 +36,11 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
         const formData = new FormData();
         formData.append("image", file);
         try {
-            // USE UPLOAD IMAGE ROUTE
             const res = await axios.post(uploadImageRoute, formData, {
-                headers: { "Content-Type": "multipart/form-data" }
+                headers: { 
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${currentUser.token}`, 
+                }
             });
             if (res.data.status) imageUrl = res.data.imageUrl;
         } catch (err) {
@@ -48,9 +52,10 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
     if (currentChat.isGroup) bodyData.groupId = currentChat._id;
     else bodyData.to = currentChat._id;
     
-    // USE SEND MESSAGE ROUTE
-    await axios.post(sendMessageRoute, bodyData);
+    const config = { headers: { Authorization: `Bearer ${currentUser.token}` } };
+    await axios.post(sendMessageRoute, bodyData, config);
 
+    // Send to Socket
     if (!currentChat.isGroup) {
         socket.current.emit("send-msg", {
             to: currentChat._id,
@@ -60,10 +65,35 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
         });
     }
 
+    // Update Local UI
+    // Note: Local messages won't have an ID immediately unless we refresh or get it from response
+    // For now, we push it. If you try to delete this specific message instantly without refresh, it might fail.
+    // That is an advanced fix (Optimistic UI), but for now this works.
     const msgs = [...messages];
     msgs.push({ fromSelf: true, message: msg, image: imageUrl, sender: { username: currentUser.username } });
     setMessages(msgs);
   };
+
+  // --- NEW: Handle Delete ---
+  const handleDeleteMessage = async (msgId) => {
+    if(!msgId) return;
+
+    // 1. Call API
+    const config = { headers: { Authorization: `Bearer ${currentUser.token}` } };
+    await axios.post(deleteMessageRoute, { msgId }, config);
+
+    // 2. Update Local State (Remove immediately)
+    setMessages((prev) => prev.filter((msg) => msg.id !== msgId));
+
+    // 3. Emit Socket event to delete for the other user
+    if (!currentChat.isGroup) {
+        socket.current.emit("delete-msg", { 
+            to: currentChat._id, 
+            msgId 
+        });
+    }
+  };
+  // --------------------------
 
   useEffect(() => {
     if (socket.current) {
@@ -73,6 +103,11 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
             message: data.msg || data, 
             image: data.image || "" 
         });
+      });
+
+      // NEW: Listen for delete event
+      socket.current.on("msg-deleted", (id) => {
+         setMessages((prev) => prev.filter((msg) => msg.id !== id));
       });
     }
   }, []);
@@ -123,6 +158,14 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
             <div ref={scrollRef} key={uuidv4()}>
               <div className={`message ${message.fromSelf ? "sended" : "recieved"}`}>
                 <div className="content">
+                  
+                  {/* DELETE BUTTON: Only show if fromSelf is TRUE and msg has an ID */}
+                  {message.fromSelf && message.id && (
+                      <div className="delete-icon" onClick={() => handleDeleteMessage(message.id)}>
+                          <FaTrash />
+                      </div>
+                  )}
+
                   {currentChat.isGroup && !message.fromSelf && message.sender && (
                       <span className="sender-name">{message.sender.username}</span>
                   )}
@@ -199,6 +242,24 @@ const Container = styled.div`
         display: flex;
         flex-direction: column;
         gap: 0.3rem;
+        position: relative; /* Needed for delete icon positioning */
+
+        /* DELETE ICON STYLING */
+        .delete-icon {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 0.8rem;
+            color: #ff0000;
+            cursor: pointer;
+            display: none; /* Hidden by default */
+        }
+
+        /* Show delete icon on hover */
+        &:hover .delete-icon {
+            display: block;
+        }
+
         .sender-name { font-size: 0.75rem; color: #9a86f3; font-weight: bold; margin-bottom: 2px; }
         .msg-image { 
             max-width: 200px; 
@@ -215,7 +276,7 @@ const Container = styled.div`
     .recieved { justify-content: flex-start; .content { background-color: #9900ff20; } }
   }
 `;
-
+// ... ImageOverlay styles remain same
 const ImageOverlay = styled.div`
     position: fixed;
     top: 0;
