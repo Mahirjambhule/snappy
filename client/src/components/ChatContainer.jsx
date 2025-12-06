@@ -84,7 +84,7 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
       });
     }
   };
-  // --------------------------
+
 
   useEffect(() => {
     if (socket.current) {
