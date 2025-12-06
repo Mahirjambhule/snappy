@@ -7,9 +7,7 @@ export default function Logout() {
   const navigate = useNavigate();
 
   const handleClick = async () => {
-    // 1. Clear the user from browser memory
     localStorage.clear();
-    // 2. Send them back to the login page
     navigate("/login");
   };
 

@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { useNavigate, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// IMPORT NEW ROUTE
 import { registerRoute } from "../utils/APIRoutes";
 
 export default function Register() {
@@ -56,7 +55,6 @@ export default function Register() {
     event.preventDefault();
     if (handleValidation()) {
       const { email, username, password } = values;
-      // USE IMPORTED ROUTE
       const { data } = await axios.post(registerRoute, {
         username,
         email,
@@ -85,14 +83,14 @@ export default function Register() {
             placeholder="Username"
             name="username"
             onChange={(e) => handleChange(e)}
-            autoComplete="off" 
+            autoComplete="off"
           />
           <input
             type="email"
             placeholder="Email"
             name="email"
             onChange={(e) => handleChange(e)}
-            autoComplete="email" 
+            autoComplete="email"
           />
           <input
             type="password"

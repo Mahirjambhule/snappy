@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const MessageSchema = new mongoose.Schema(
   {
     message: {
-      // FIX: Explicitly setting required to FALSE
       text: { type: String, required: false }, 
       image: { type: String, default: "" },
     },

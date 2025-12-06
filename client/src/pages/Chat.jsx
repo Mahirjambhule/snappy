@@ -3,7 +3,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import styled from "styled-components";
-// IMPORT ROUTES
 import { allUsersRoute, host } from "../utils/APIRoutes";
 import Contacts from "../components/Contacts";
 import Welcome from "../components/Welcome";
@@ -30,7 +29,6 @@ export default function Chat() {
 
   useEffect(() => {
     if (currentUser) {
-      // USE HOST FROM UTILS
       socket.current = io(host);
       socket.current.emit("add-user", currentUser._id);
 
@@ -47,7 +45,6 @@ export default function Chat() {
   useEffect(() => {
     const getContacts = async () => {
       if (currentUser) {
-        // USE ALL USERS ROUTE
         const data = await axios.get(`${allUsersRoute}/${currentUser._id}`);
         setContacts(data.data);
       }
@@ -63,9 +60,9 @@ export default function Chat() {
     <>
       <Container>
         <div className="container">
-          <Contacts 
-            contacts={contacts} 
-            changeChat={handleChatChange} 
+          <Contacts
+            contacts={contacts}
+            changeChat={handleChatChange}
             onlineUsers={onlineUsers}
           />
           {currentChat === undefined ? (

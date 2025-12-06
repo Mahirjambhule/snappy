@@ -3,18 +3,17 @@ import styled from "styled-components";
 
 export default function Welcome() {
   const [userName, setUserName] = useState("");
-  
+
   useEffect(() => {
     const fetchData = async () => {
       const data = await JSON.parse(localStorage.getItem("chat-app-user"));
-      if(data) setUserName(data.username);
+      if (data) setUserName(data.username);
     };
     fetchData();
   }, []);
 
   return (
     <Container>
-      {/* Updated to Robohash */}
       <img src={`https://robohash.org/${userName}?set=set4`} alt="Robot" />
       <h1>
         Welcome, <span>{userName}!</span>

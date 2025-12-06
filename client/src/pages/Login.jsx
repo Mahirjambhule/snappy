@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { useNavigate, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// IMPORT THE NEW ROUTE
 import { loginRoute } from "../utils/APIRoutes";
 
 export default function Login() {
@@ -45,7 +44,6 @@ export default function Login() {
     event.preventDefault();
     if (handleValidation()) {
       const { password, email } = values;
-      // USE THE IMPORTED ROUTE HERE
       const { data } = await axios.post(loginRoute, {
         email,
         password,

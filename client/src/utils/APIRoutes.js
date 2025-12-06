@@ -1,4 +1,3 @@
-// export const host = "http://localhost:3001";
 export const host = "https://snappy-8ien.onrender.com"
 
 export const loginRoute = `${host}/api/auth/login`;

@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken"); // Import JWT
+const jwt = require("jsonwebtoken");
 
 // Helper function to create token
 const createToken = (id) => {
@@ -18,7 +18,7 @@ module.exports.register = async (req, res, next) => {
     const emailCheck = await User.findOne({ email });
     if (emailCheck)
       return res.json({ msg: "Email already used", status: false });
-    
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
       email,
@@ -29,11 +29,9 @@ module.exports.register = async (req, res, next) => {
     const userResponse = user.toObject();
     delete userResponse.password;
 
-    // GENERATE TOKEN
     const token = createToken(user._id);
-    
-    // Send token inside the user object (or separate, but this is easiest for your current frontend)
-    userResponse.token = token; 
+
+    userResponse.token = token;
 
     return res.json({ status: true, user: userResponse });
   } catch (ex) {
@@ -50,11 +48,10 @@ module.exports.login = async (req, res, next) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid)
       return res.json({ msg: "Incorrect Username or Password", status: false });
-    
-    const userResponse = user.toObject(); // Convert to object to modify it
+
+    const userResponse = user.toObject();
     delete userResponse.password;
 
-    // GENERATE TOKEN
     const token = createToken(user._id);
     userResponse.token = token;
 
@@ -64,17 +61,16 @@ module.exports.login = async (req, res, next) => {
   }
 };
 
-// ... getAllUsers remains the same for now, we will protect it in routes
 module.exports.getAllUsers = async (req, res, next) => {
-    try {
-      const users = await User.find({ _id: { $ne: req.params.id } }).select([
-        "email",
-        "username",
-        "avatarImage",
-        "_id",
-      ]);
-      return res.json(users);
-    } catch (ex) {
-      next(ex);
-    }
-  };
+  try {
+    const users = await User.find({ _id: { $ne: req.params.id } }).select([
+      "email",
+      "username",
+      "avatarImage",
+      "_id",
+    ]);
+    return res.json(users);
+  } catch (ex) {
+    next(ex);
+  }
+};

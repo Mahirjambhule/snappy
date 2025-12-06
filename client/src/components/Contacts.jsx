@@ -4,7 +4,6 @@ import Logout from "./Logout";
 import CreateGroup from "./CreateGroup";
 import axios from "axios";
 import { FaPlus } from "react-icons/fa";
-// IMPORT ROUTE
 import { getGroupsRoute } from "../utils/APIRoutes";
 
 export default function Contacts({ contacts, changeChat, onlineUsers }) {
@@ -27,11 +26,10 @@ export default function Contacts({ contacts, changeChat, onlineUsers }) {
 
   const fetchGroups = async (userId) => {
     try {
-        // USE IMPORTED ROUTE
-        const res = await axios.get(`${getGroupsRoute}/${userId}`);
-        setGroups(res.data);
-    } catch(err) {
-        console.error("Error fetching groups", err);
+      const res = await axios.get(`${getGroupsRoute}/${userId}`);
+      setGroups(res.data);
+    } catch (err) {
+      console.error("Error fetching groups", err);
     }
   };
 
@@ -50,8 +48,8 @@ export default function Contacts({ contacts, changeChat, onlineUsers }) {
           </div>
           <div className="contacts">
             <div className="section-title">
-                <h4>Groups</h4>
-                <FaPlus onClick={() => setShowGroupModal(true)} style={{cursor:"pointer", color:"#9a86f3"}}/>
+              <h4>Groups</h4>
+              <FaPlus onClick={() => setShowGroupModal(true)} style={{ cursor: "pointer", color: "#9a86f3" }} />
             </div>
             {groups.map((group, index) => {
               return (
@@ -70,7 +68,7 @@ export default function Contacts({ contacts, changeChat, onlineUsers }) {
               );
             })}
             <div className="section-title">
-                <h4>Direct Messages</h4>
+              <h4>Direct Messages</h4>
             </div>
             {contacts.map((contact, index) => {
               const isOnline = onlineUsers.includes(contact._id);
@@ -95,22 +93,22 @@ export default function Contacts({ contacts, changeChat, onlineUsers }) {
           </div>
           <div className="current-user">
             <div className="user-details">
-                <div className="avatar">
+              <div className="avatar">
                 <img src={currentUserImage} alt="avatar" />
-                </div>
-                <div className="username">
+              </div>
+              <div className="username">
                 <h2>{currentUserName}</h2>
-                </div>
+              </div>
             </div>
-            <Logout /> 
+            <Logout />
           </div>
           {showGroupModal && (
-              <CreateGroup 
-                contacts={contacts} 
-                currentUser={currentUser} 
-                closeModal={() => setShowGroupModal(false)}
-                refreshGroups={() => fetchGroups(currentUser._id)}
-              />
+            <CreateGroup
+              contacts={contacts}
+              currentUser={currentUser}
+              closeModal={() => setShowGroupModal(false)}
+              refreshGroups={() => fetchGroups(currentUser._id)}
+            />
           )}
         </Container>
       )}

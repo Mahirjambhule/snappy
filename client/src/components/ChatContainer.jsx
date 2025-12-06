@@ -4,7 +4,7 @@ import ChatInput from "./ChatInput";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { IoMdDownload, IoMdClose } from "react-icons/io";
-import { FaTrash } from "react-icons/fa"; // NEW Icon
+import { FaTrash } from "react-icons/fa";
 import { sendMessageRoute, receiveMessageRoute, uploadImageRoute, deleteMessageRoute } from "../utils/APIRoutes";
 
 export default function ChatContainer({ currentChat, currentUser, socket }) {
@@ -15,13 +15,13 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      if(currentChat){
+      if (currentChat) {
         const bodyData = { from: currentUser._id };
         if (currentChat.isGroup) bodyData.groupId = currentChat._id;
         else bodyData.to = currentChat._id;
 
         const config = {
-            headers: { Authorization: `Bearer ${currentUser.token}` },
+          headers: { Authorization: `Bearer ${currentUser.token}` },
         };
         const response = await axios.post(receiveMessageRoute, bodyData, config);
         setMessages(response.data);
@@ -33,64 +33,55 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
   const handleSendMsg = async (msg, file) => {
     let imageUrl = "";
     if (file) {
-        const formData = new FormData();
-        formData.append("image", file);
-        try {
-            const res = await axios.post(uploadImageRoute, formData, {
-                headers: { 
-                    "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${currentUser.token}`, 
-                }
-            });
-            if (res.data.status) imageUrl = res.data.imageUrl;
-        } catch (err) {
-            console.error("Upload failed", err);
-        }
+      const formData = new FormData();
+      formData.append("image", file);
+      try {
+        const res = await axios.post(uploadImageRoute, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${currentUser.token}`,
+          }
+        });
+        if (res.data.status) imageUrl = res.data.imageUrl;
+      } catch (err) {
+        console.error("Upload failed", err);
+      }
     }
 
     const bodyData = { from: currentUser._id, message: msg, image: imageUrl };
     if (currentChat.isGroup) bodyData.groupId = currentChat._id;
     else bodyData.to = currentChat._id;
-    
+
     const config = { headers: { Authorization: `Bearer ${currentUser.token}` } };
     await axios.post(sendMessageRoute, bodyData, config);
 
-    // Send to Socket
     if (!currentChat.isGroup) {
-        socket.current.emit("send-msg", {
-            to: currentChat._id,
-            from: currentUser._id,
-            msg,
-            image: imageUrl,
-        });
+      socket.current.emit("send-msg", {
+        to: currentChat._id,
+        from: currentUser._id,
+        msg,
+        image: imageUrl,
+      });
     }
 
-    // Update Local UI
-    // Note: Local messages won't have an ID immediately unless we refresh or get it from response
-    // For now, we push it. If you try to delete this specific message instantly without refresh, it might fail.
-    // That is an advanced fix (Optimistic UI), but for now this works.
     const msgs = [...messages];
     msgs.push({ fromSelf: true, message: msg, image: imageUrl, sender: { username: currentUser.username } });
     setMessages(msgs);
   };
 
-  // --- NEW: Handle Delete ---
   const handleDeleteMessage = async (msgId) => {
-    if(!msgId) return;
+    if (!msgId) return;
 
-    // 1. Call API
     const config = { headers: { Authorization: `Bearer ${currentUser.token}` } };
     await axios.post(deleteMessageRoute, { msgId }, config);
 
-    // 2. Update Local State (Remove immediately)
     setMessages((prev) => prev.filter((msg) => msg.id !== msgId));
 
-    // 3. Emit Socket event to delete for the other user
     if (!currentChat.isGroup) {
-        socket.current.emit("delete-msg", { 
-            to: currentChat._id, 
-            msgId 
-        });
+      socket.current.emit("delete-msg", {
+        to: currentChat._id,
+        msgId
+      });
     }
   };
   // --------------------------
@@ -98,16 +89,15 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
   useEffect(() => {
     if (socket.current) {
       socket.current.on("msg-recieve", (data) => {
-        setArrivalMessage({ 
-            fromSelf: false, 
-            message: data.msg || data, 
-            image: data.image || "" 
+        setArrivalMessage({
+          fromSelf: false,
+          message: data.msg || data,
+          image: data.image || ""
         });
       });
 
-      // NEW: Listen for delete event
       socket.current.on("msg-deleted", (id) => {
-         setMessages((prev) => prev.filter((msg) => msg.id !== id));
+        setMessages((prev) => prev.filter((msg) => msg.id !== id));
       });
     }
   }, []);
@@ -122,20 +112,20 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
 
   const downloadImage = async (url) => {
     try {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = `image-${Date.now()}.jpg`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `image-${Date.now()}.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     } catch (error) {
-        console.error("Download failed", error);
+      console.error("Download failed", error);
     }
   };
 
-  const avatarImage = currentChat.isGroup 
+  const avatarImage = currentChat.isGroup
     ? `https://robohash.org/${currentChat.name}?set=set1`
     : `https://robohash.org/${currentChat.username}?set=set4`;
   const displayName = currentChat.isGroup ? currentChat.name : currentChat.username;
@@ -158,24 +148,23 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
             <div ref={scrollRef} key={uuidv4()}>
               <div className={`message ${message.fromSelf ? "sended" : "recieved"}`}>
                 <div className="content">
-                  
-                  {/* DELETE BUTTON: Only show if fromSelf is TRUE and msg has an ID */}
+
                   {message.fromSelf && message.id && (
-                      <div className="delete-icon" onClick={() => handleDeleteMessage(message.id)}>
-                          <FaTrash />
-                      </div>
+                    <div className="delete-icon" onClick={() => handleDeleteMessage(message.id)}>
+                      <FaTrash />
+                    </div>
                   )}
 
                   {currentChat.isGroup && !message.fromSelf && message.sender && (
-                      <span className="sender-name">{message.sender.username}</span>
+                    <span className="sender-name">{message.sender.username}</span>
                   )}
                   {message.image && (
-                      <img 
-                        src={message.image} 
-                        alt="uploaded" 
-                        className="msg-image"
-                        onClick={() => setViewImage(message.image)}
-                      />
+                    <img
+                      src={message.image}
+                      alt="uploaded"
+                      className="msg-image"
+                      onClick={() => setViewImage(message.image)}
+                    />
                   )}
                   {message.message && <p>{message.message}</p>}
                 </div>
@@ -187,13 +176,13 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
       <ChatInput handleSendMsg={handleSendMsg} />
       {viewImage && (
         <ImageOverlay onClick={() => setViewImage(null)}>
-            <div className="overlay-content" onClick={(e) => e.stopPropagation()}>
-                <img src={viewImage} alt="Full View" />
-                <div className="controls">
-                    <button onClick={() => downloadImage(viewImage)} title="Download"><IoMdDownload /></button>
-                    <button onClick={() => setViewImage(null)} title="Close"><IoMdClose /></button>
-                </div>
+          <div className="overlay-content" onClick={(e) => e.stopPropagation()}>
+            <img src={viewImage} alt="Full View" />
+            <div className="controls">
+              <button onClick={() => downloadImage(viewImage)} title="Download"><IoMdDownload /></button>
+              <button onClick={() => setViewImage(null)} title="Close"><IoMdClose /></button>
             </div>
+          </div>
         </ImageOverlay>
       )}
     </Container>
@@ -276,7 +265,7 @@ const Container = styled.div`
     .recieved { justify-content: flex-start; .content { background-color: #9900ff20; } }
   }
 `;
-// ... ImageOverlay styles remain same
+
 const ImageOverlay = styled.div`
     position: fixed;
     top: 0;

@@ -3,7 +3,6 @@ import styled from "styled-components";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { IoMdClose } from "react-icons/io";
-// IMPORT ROUTE
 import { createGroupRoute } from "../utils/APIRoutes";
 
 export default function CreateGroup({ contacts, currentUser, closeModal, refreshGroups }) {
@@ -29,7 +28,6 @@ export default function CreateGroup({ contacts, currentUser, closeModal, refresh
     }
 
     try {
-      // USE IMPORTED ROUTE
       const { data } = await axios.post(createGroupRoute, {
         name: groupName,
         members: selectedMembers,
@@ -38,8 +36,8 @@ export default function CreateGroup({ contacts, currentUser, closeModal, refresh
 
       if (data.status) {
         toast.success("Group created successfully!");
-        refreshGroups(); 
-        closeModal(); 
+        refreshGroups();
+        closeModal();
       }
     } catch (err) {
       console.error(err);
@@ -51,8 +49,8 @@ export default function CreateGroup({ contacts, currentUser, closeModal, refresh
     <Overlay>
       <Container>
         <div className="header">
-            <h3>Create New Group</h3>
-            <IoMdClose onClick={closeModal} />
+          <h3>Create New Group</h3>
+          <IoMdClose onClick={closeModal} />
         </div>
         <input
           type="text"

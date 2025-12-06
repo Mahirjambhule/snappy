@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import { IoMdSend } from "react-icons/io";
-import { GrAttachment } from "react-icons/gr"; // NEW Icon
+import { GrAttachment } from "react-icons/gr";
 import styled from "styled-components";
 import Picker from "emoji-picker-react";
 
@@ -22,17 +22,15 @@ export default function ChatInput({ handleSendMsg }) {
   const sendChat = (event) => {
     event.preventDefault();
     if (msg.length > 0) {
-      handleSendMsg(msg, ""); // Send text only
+      handleSendMsg(msg, "");
       setMsg("");
     }
   };
 
-  // NEW: Handle File Selection
   const sendImage = (e) => {
     const file = e.target.files[0];
     if (file) {
-        // Send file to parent immediately
-        handleSendMsg("", file);
+      handleSendMsg("", file);
     }
   };
 
@@ -43,19 +41,18 @@ export default function ChatInput({ handleSendMsg }) {
           <BsEmojiSmileFill onClick={handleEmojiPickerhideShow} />
           {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />}
         </div>
-        
-        {/* NEW: Attachment Button */}
+
         <div className="attachment">
-             <label htmlFor="file-input">
-                <GrAttachment style={{cursor: "pointer", fontSize:"1.5rem", color:"white"}}/>
-             </label>
-             <input 
-                id="file-input" 
-                type="file" 
-                style={{display: "none"}} 
-                onChange={sendImage}
-                accept="image/*"
-             />
+          <label htmlFor="file-input">
+            <GrAttachment style={{ cursor: "pointer", fontSize: "1.5rem", color: "white" }} />
+          </label>
+          <input
+            id="file-input"
+            type="file"
+            style={{ display: "none" }}
+            onChange={sendImage}
+            accept="image/*"
+          />
         </div>
 
       </div>

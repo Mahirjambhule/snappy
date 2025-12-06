@@ -8,13 +8,12 @@ const app = express();
 const socket = require("socket.io");
 require("dotenv").config();
 
-// --- 1. ALLOWED ORIGINS ---
+
 const allowedOrigins = [
-  "http://localhost:5173",                // Local React
-  "https://snappy-woad.vercel.app"        // Deployed Vercel App
+  "http://localhost:5173",
+  "https://snappy-woad.vercel.app"
 ];
 
-// --- 2. EXPRESS CORS ---
 app.use(
   cors({
     origin: allowedOrigins,
@@ -41,10 +40,9 @@ const server = app.listen(process.env.PORT || 3001, () => {
   console.log(`Server Started on Port ${process.env.PORT || 3001}`);
 });
 
-// --- 3. SOCKET.IO CORS ---
 const io = socket(server, {
   cors: {
-    origin: allowedOrigins, // Use the same allowed list
+    origin: allowedOrigins,
     credentials: true,
   },
 });
@@ -63,7 +61,7 @@ io.on("connection", (socket) => {
     if (sendUserSocket) {
       socket.to(sendUserSocket).emit("msg-recieve", {
         msg: data.msg,
-        image: data.image 
+        image: data.image
       });
     }
   });
